@@ -1,6 +1,6 @@
 =head1 NAME
 
-HTML::FormEngine::DBSQL::DtHandler - DBMS independent datatype handlers
+HTML::FormEngine::DBSQL::DtHandler - DBMS datatype handlers
 
 =head1 GENERAL INFORMATION ABOUT DATATYPE HANDLERS
 
@@ -18,16 +18,19 @@ a reference to the fields form configuration hash
 
 =item
 
-a reference to an hash which contains information about the column (see FormEngine::DBSQL::PGSQL).
+a reference to a hash which contains information about the column, the
+information is extracted with the help of DBIs C<column_info> method,
+read the documentation of DBI for more information.
 
 =back
 
-The handler now modifies the fields configuration hash and can
-therefore use information out of the column information hash (which he
-mustn't modify!).
+The handler then modifies the fields configuration hash and can use
+information out of the column information hash (which he mustn't
+modify!).
 
-Which handler is called for which datatype is configured in Config.pm
-of the used DBMS driver.
+Which handler is called for which datatype is configured by the
+skin. The default skin is HTML::FormEngine::DBSQL::SkinClassic.
+
 
 =cut
 
@@ -47,6 +50,31 @@ use Locale::gettext;
 
 =head1 DATATYPE HANDLERS
 
+=head2 _dbsql_dthandle_string
+
+Sets C<templ> to I<text> and tries to determine the maximal length
+which is then assigned to C<MAXLEN>. When C<MAXLEN> is lower
+than the default size, C<SIZE> is set to C<MAXLEN>.
+
+=cut
+
+######################################################################
+
+sub _dbsql_dthandle_string {
+  my ($self,$res,$info) = @_;
+  $res->{templ} = 'text';
+  #if($info->{dtypmod} =~ m/^[0-9]+$/ && $info->{dtypmod} > 4) {
+  if($info->{COLUMN_SIZE} =~ m/^[0-9]+$/) {
+    #$res->{MAXLEN} = $info->{dtypmod} -4;
+    $res->{MAXLEN} = $info->{COLUMN_SIZE};
+    if(! defined($self->{skin_obj}->get_default('_text', 'SIZE')) || ($res->{MAXLEN} < $self->{skin_obj}->get_default('_text','SIZE'))) {
+      $res->{SIZE} = $res->{MAXLEN};
+    }
+  }
+}
+
+######################################################################
+
 =head2 _dbsql_dthandle_bool
 
 C<templ> is set to I<select>, I<Yes> or I<No> is given as options
@@ -59,8 +87,8 @@ which is internally represented as 1 and 0.
 sub _dbsql_dthandle_bool {
   my ($self,$res) = @_;
   $res->{templ} = 'select';
-  $res->{OPTION} = [gettext('Yes'),gettext('No')];
-  $res->{OPT_VAL} = ['1','0'];
+  $res->{OPTION} = [[[gettext('Yes'),gettext('No')]]];
+  $res->{OPT_VAL} = [[['1','0']]];
 }
 
 ######################################################################
@@ -82,21 +110,39 @@ sub _dbsql_dthandle_date {
   $res->{ERROR} = 'date';
 }
 
+######################################################################
+
+=head2 _dbsql_dthandle_text
+
+C<templ> is set to I<textarea>.
+
+=cut
+
+######################################################################
+
 sub _dbsql_dthandle_text {
   my($self,$res) = @_;
   $res->{templ} = 'textarea';
 }
 
-1;
-
-__END__
-
 ######################################################################
 
-=head1 SEE ALSO
+=head2 _dbsql_dthandle_integer
 
-  HTML::FormEngine::DBSQL::PGSQL::DtHandler
+C<ERROR> is set to C<digitonly>.
 
 =cut
 
 ######################################################################
+
+sub _dbsql_dthandle_integer {
+  my ($self,$res) = @_;
+  $res->{templ} = 'text';
+  $res->{ERROR} = 'digitonly';
+}
+
+######################################################################
+
+1;
+
+__END__

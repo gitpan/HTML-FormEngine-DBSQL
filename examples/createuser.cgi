@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
-use HTML::FormEngine::DBSQL::PGSQL;
+use HTML::FormEngine::DBSQL;
 use DBI;
 use CGI;
 #use POSIX; #for setlocale
@@ -10,17 +10,9 @@ use CGI;
 my $q = new CGI;
 print $q->header;
 
-my $dbh = DBI->connect('dbi:Pg:dbname=test', 'test');
-my $Form = HTML::FormEngine::DBSQL::PGSQL->new(scalar $q->Vars, $dbh);
-my %preconf = (
-	       phone => {
-		   SIZE => [[5,13]],
-		   SUBTITLE => [['', '&nbsp;/&nbsp;']],
-		   }
-	       );
-$Form->dbsql_preconf(\%preconf);
+my $dbh = DBI->connect('dbi:Pg:dbname=test', 'test', 'test');
+my $Form = HTML::FormEngine::DBSQL->new(scalar $q->Vars, $dbh);
 $Form->dbsql_conf('user');
-$Form->dbsql_add_extra_sql('INSERT INTO login DEFAULT VALUES');
 $Form->make();
 print $q->start_html('FormEngine-dbsql example: User Administration');
 if($Form->ok) {

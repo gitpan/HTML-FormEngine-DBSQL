@@ -20,3 +20,10 @@ msgstr "existiert bereits"
 
 msgid "Primary key is missing for table"
 msgstr "Primär Schlüssel fehlt für Tabelle"
+
+msgid "Can't update record(s) due to primary key cheksum mismatch"
+msgstr "Auf Grund nicht &uuml;bereinstimmender Pr&uuml;fsummen k&ouml;nnen keine Datens&auml;tze aktualisiert werden"
+
+msgid "SQL failure"
+msgstr "SQL Fehler"
+

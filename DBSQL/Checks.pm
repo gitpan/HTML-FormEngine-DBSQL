@@ -24,18 +24,23 @@ also work when executing updates.
 ######################################################################
 
 sub _dbsql_check_unique {
-  my ($value,$field,$self) = @_;
+  my ($value,$self,$caller,$namevar) = @_;
+  return '' unless($value ne '');
   my ($table,$where, $i);
+  my $field = $self->_get_var($namevar||'NAME');
   if($field =~ m/^(.+)\..+$/) {
     $table = $1;
   }
   else {
     $table = $self->{dbsql_tables}->[0];
   }
-  $i = $self->_get_var('ROWNUM',1);
+  #$i = $self->_get_var('ROWNUM',1);
   foreach $_ (keys(%{$self->{dbsql_pkey}->{$table}})) {
-    $val = $self->get_input_value($_);
-    $val = $val->[$i-1] if($i);
+    $val = $self->_get_input($_);
+    if(ref($val) eq 'ARRAY') {
+      $val = $val->[$self->{values}->{$field} || 0];# if($i);
+      $val = $val->[$self->{_handle_error}->{$field}-1] if(ref($val) eq 'ARRAY');
+    }
     if(!$val) {
       undef($where);
       last;
@@ -43,7 +48,13 @@ sub _dbsql_check_unique {
     $where .= ' AND ' . $_ . ' != ' . $self->{dbsql}->quote($val);
   }
   $where = '' unless(defined($where));
-  if($self->{dbsql}->selectrow_array("SELECT 1 FROM $table WHERE $field='$value'" . $where)) {
+  my $sql = "SELECT 1 FROM \"$table\" WHERE $field='$value'" . $where;
+  my $sth = $self->{dbsql}->prepare($sql);
+  unless($sth->execute) {
+    $self->_dbsql_sql_error($sql);
+    return 0;
+  }
+  if($sth->fetchrow_array()) {
     return gettext('already exists') . '!';
   }
 }
