@@ -1,19 +1,23 @@
+=head1 NAME
+
+HTML::FormEngine::DBSQL::Checks - collection of FormEngine::DBSQL check routines
+
+=cut
+
+######################################################################
+
 package HTML::FormEngine::DBSQL::Checks;
 
 use Locale::gettext;
 
 ######################################################################
 
-=head1 NAME
-
-HTML::FormEngine::DBSQL - collection of FormEngine::DBSQL check routines
-
 =head1 METHODS
 
 =head2 dbsql_unique
 
-This method proves wether the committed field value is unique in the
-tables records for that field.
+This method proves whether the committed field value is unique in the
+tables records for this field.
 
 When primary key values are provided, the method checks all records
 except the record which belongs to the corresponding pkey. So it'll

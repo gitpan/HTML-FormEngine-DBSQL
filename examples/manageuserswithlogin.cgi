@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
-use HTML::FormEngine::DBSQL::PGSQL;
+use HTML::FormEngine::DBSQL;
 use DBI;
 use CGI;
 #use POSIX;
@@ -11,7 +11,7 @@ my $q = new CGI;
 print $q->header;
 
 my $dbh = DBI->connect('dbi:Pg:dbname=test', 'test', 'test');
-my $Form = HTML::FormEngine::DBSQL::PGSQL->new(scalar $q->Vars, $dbh);
+my $Form = HTML::FormEngine::DBSQL->new(scalar $q->Vars, $dbh);
 $Form->get_skin_obj()->set_dbsql_secret('te123st');
 #$Form->dbsql_set_write_null_fields(2);
 my %preconf = (

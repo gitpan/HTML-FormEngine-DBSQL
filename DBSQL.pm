@@ -16,11 +16,9 @@ require 5.004;
 
 use strict;
 use vars qw(@ISA $VERSION);
-use Locale::gettext;
-use Digest::MD5 qw(md5_hex);
 use HTML::FormEngine;
 @ISA = qw(HTML::FormEngine);
-$VERSION = '1.0';
+$VERSION = '1.01';
 
 ######################################################################
 
@@ -41,8 +39,7 @@ $VERSION = '1.0';
         Hash::Merge 0.07
         Locale::gettext 1.01
         Digest::MD5 2.24
-
-=cut
+        DBI 1.42
 
 =head1 REQUIREMENTS
 
@@ -56,6 +53,8 @@ $VERSION = '1.0';
 use Carp;
 use Clone qw(clone);
 use Hash::Merge qw(merge);
+use Locale::gettext;
+use Digest::MD5 qw(md5_hex);
 use HTML::FormEngine::DBSQL::SkinClassic;
 
 ######################################################################
@@ -1856,6 +1855,11 @@ Please use
 L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=HTML-FormEngine-DBSQL> for
 comments, suggestions and bug reports. If it doesn't work feel free to
 mail to moritz@freesources.org.
+
+=head1 CREDITS
+
+Special thanks to Mark Stosberg, he helped a lot by reporting bugs,
+contributing new ideas and sending patches.
 
 =head1 SEE ALSO
 

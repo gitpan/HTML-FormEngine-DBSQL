@@ -1,5 +1,5 @@
-HTML::FormEngine::DBSQL version 1.0
-===================================
+HTML::FormEngine::DBSQL version 1.01
+====================================
 
 DBSQL.pm is a exentsion of HTML::FormEngine, that means it inherits
 all functionality from HTML::FormEngine and adds some new features.
@@ -25,8 +25,9 @@ database (e.g. functions for automatically inserting and updating are
 provided).
 
 NOTE: Due to a consequent redesign FormEngine::DBSQL 1.0 is not
-compatible to older versions. Please read MIGRATING for help on
-migrating your old scripts to FormEngine::DBSQL 1.0.
+compatible to older versions. Please read the MIGRATING file (which
+you find in the distribution near to this file) for help on migrating
+your old scripts to FormEngine::DBSQL >=1.0.
 
 Please see the POD for additional information.
 
@@ -52,6 +53,7 @@ DEPENDENCIES
 - Locale::gettext 1.01 by Phillip Vandry
 - Digest::MD5 2.24 by Gisle Aas
 - Clone 0.13 by Ray Finch
+- DBI 1.42 by the DBI developers
 - HTML::FormEngine 1.0 by Moritz Sinn
 
 COPYRIGHT AND LICENCE

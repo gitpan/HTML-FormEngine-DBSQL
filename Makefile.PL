@@ -9,6 +9,7 @@ WriteMakefile(
 		'Locale::gettext' => 1.01,
 		'Digest::MD5' => 2.24,
 		'Clone' => 0.13,
+		'DBI' => 1.42,
 		'HTML::FormEngine' => 1.0
 	},
 );

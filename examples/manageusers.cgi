@@ -4,7 +4,6 @@ use strict;
 use HTML::FormEngine::DBSQL;
 use DBI;
 use CGI;
-use Apache::Request;
 #use POSIX;
 #setlocale(LC_MESSAGES, 'german');
 
