@@ -50,11 +50,14 @@ sub _dbsql_initialize_child {
 
 ######################################################################
 
-=head1 get_tbl_struct ( HASHREF )
+=head1 get_tbl_struct ( TABLENAME, ARRAYREF, HASHREF )
 
 This method is called by the C<dbsql_conf> method of FormEngine::DBSQL
 to get information about the columns of the specified database
 table. Every DBMS driver has to implement it!
+
+The ARRAYREF points to the list of fieldnames, the HASHREF points to a
+hash which keys are fieldnames too, these fieldnames must be ignored.
 
 This method must return a reference to an array which must contain an
 hash reference for every column, except those in the committed
@@ -98,14 +101,14 @@ I<dtypmod> - datatype modification information, this is used by PostgreSQLs stri
 ######################################################################
 
 sub get_tbl_struct {
-  my ($self, $donotuse) = @_;
+  my ($self, $tbl, $fields, $donotuse) = @_;
   my ($sth, $field, @struct);
-  $sth = $self->{dbsql}->prepare('SELECT * FROM column_info WHERE relname=\'' . $self->{dbsql_table} . '\' AND attname LIKE ?');
-  foreach $field (@{$self->{dbsql_fields}}) {
-    if(defined($field)) {
+  $sth = $self->{dbsql}->prepare('SELECT * FROM column_info WHERE relname=\'' . $tbl . '\' AND attname LIKE ?');
+  foreach $field (@{$fields}) {
+    if(defined($field) && ! $donotuse->{$field}) {
       $sth->execute($field);
       while($_ = $sth->fetchrow_hashref) {
-	if(! $donotuse->{$field}) {
+	if(! $donotuse->{$_->{attname}}) {
 	  push @struct, {
 			 'name' => $_->{attname},
 			 'notnull' => $_->{attnotnull},

@@ -20,7 +20,7 @@ a reference to the fields form configuration hash
 
 a reference to an hash which contains information about the column (see FormEngine::DBSQL::PGSQL).
 
-=over
+=back
 
 The handler now modifies the fields configuration hash and can
 therefore use information out of the column information hash (which he

@@ -14,3 +14,9 @@ msgstr "Fehler"
 
 msgid "Can't update record(s) due to missing primary key checksum"
 msgstr "Auf Grund der fehlenden Prim&auml;rschl&uuml;ssel-Pr&uuml;fsumme k&ouml;nnen keine Datens&auml;tze aktualisiert werden"
+
+msgid "already exists"
+msgstr "existiert bereits"
+
+msgid "Primary key is missing for table"
+msgstr "Primär Schlüssel fehlt für Tabelle"

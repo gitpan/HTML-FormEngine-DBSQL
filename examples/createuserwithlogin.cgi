@@ -18,9 +18,8 @@ my %preconf = (
 		   SUBTITLE => [['', '&nbsp;/&nbsp;']],
 		   }
 	       );
-$Form->dbsql_preconf(\%preconf);
-$Form->dbsql_conf('user');
-$Form->dbsql_add_extra_sql('INSERT INTO login DEFAULT VALUES');
+$Form->dbsql_preconf(\%preconf, undef, {templ => 'text', TYPE => 'password', TITLE => 'Conf. Password', NAME => 'passconf', ERROR => 'fmatch', fmatch => 'login.password'});
+$Form->dbsql_conf(['user','login']);
 $Form->make();
 print $q->start_html('FormEngine-dbsql example: User Administration');
 if($Form->ok) {

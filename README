@@ -1,4 +1,4 @@
-HTML::FormEngine::DBSQL version 0.1
+HTML::FormEngine::DBSQL version 0.2
 ===================================
 
 DBSQL.pm is a exentsion of HTML::FormEngine, that means it inherits

@@ -1,0 +1,15 @@
+0.1
+---
+
+initial release
+
+0.2
+-----
+
+- enhanced documentation
+- fixed bug in PGSQL.pm
+- fixed bug in _dbsql_parse method
+- fixed bug in dbsql_conf method
+- implemented multi table support
+- added primary key check sum (enhanced security)
+- new method dbsql_add_extra_sql (and many more).
