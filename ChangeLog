@@ -13,3 +13,10 @@ initial release
 - implemented multi table support
 - added primary key check sum (enhanced security)
 - new method dbsql_add_extra_sql (and many more).
+
+0.2.1
+-----
+
+- fixed 'NULL'-bug in _dbsql_write
+- dbsql_set_show_default will not influence dbsql_update anymore!
+- enhanced documentation

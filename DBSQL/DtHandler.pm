@@ -79,6 +79,12 @@ sub _dbsql_dthandle_date {
   $res->{templ} = 'text';
   $res->{MAXLEN} = 10;
   $res->{SIZE} = 10;
+  $res->{ERROR} = 'date';
+}
+
+sub _dbsql_dthandle_text {
+  my($self,$res) = @_;
+  $res->{templ} = 'textarea';
 }
 
 1;

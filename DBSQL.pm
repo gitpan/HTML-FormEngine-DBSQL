@@ -725,31 +725,34 @@ sub dbsql_conf {
       }
       $sth = $self->{dbsql}->prepare($sql);
       if(! $sth->execute) {
+	die($self->{dbsql}->errstr);
 	$self->_dbsql_sql_error($sth->{Statement});
       }
-      if($count == -254) {
-	$count = $sth->rows 
-      }
-      elsif($count ne $sth->rows) {
-	croak('There must be the same count of records for each table!');
-      }
-      while($self->{dbsql_show_value} && ($tmp = $sth->fetchrow_hashref)) {
-	foreach $_ (keys(%{$tmp})) {
-	  $field = (@{$self->{dbsql_tables}} > 1 ? "$tbl.$_" : $_);
-	  if(ref($value{$field}) ne 'ARRAY') {
-	    $value{$field} = [];
-	  }
-	  if(defined($tmp->{$_}) and $tmp->{$_} =~ m/^({.*})$/) {
-	    push @{$value{$field}}, ($self->_dbsql_parse($1));
-	  }
-	  else {
-	    push @{$value{$field}}, $tmp->{$_};
+      else {
+	if($count == -254) {
+	  $count = $sth->rows 
+	}
+	elsif($count ne $sth->rows) {
+	  croak('There must be the same count of records for each table!');
+	}
+	while($self->{dbsql_show_value} && ($tmp = $sth->fetchrow_hashref)) {
+	  foreach $_ (keys(%{$tmp})) {
+	    $field = (@{$self->{dbsql_tables}} > 1 ? "$tbl.$_" : $_);
+	    if(ref($value{$field}) ne 'ARRAY') {
+	      $value{$field} = [];
+	    }
+	    if(defined($tmp->{$_}) and $tmp->{$_} =~ m/^({.*})$/) {
+	      push @{$value{$field}}, ($self->_dbsql_parse($1));
+	    }
+	    else {
+	      push @{$value{$field}}, $tmp->{$_};
+	    }
 	  }
 	}
       }
     }
   }
-
+  
   if($self->{dbsql_row} > 0 or $count > 1 and $self->{dbsql_row} == -254) {
     $self->{dbsql_row} = 1;
     $tmp = [];
@@ -954,7 +957,9 @@ records). You can pass a fieldname or an reference to an array with
 fieldnames to this method. This method should be called before
 C<dbsql_conf> (for being sure, call this method as early as possible).
 
-B<Note>: If you pass several table names to dbsql_conf, you must pass as hash reference here, else the passed pkeys will only be used for the first table.
+B<Note>: If you pass several table names to dbsql_conf, you must pass
+as hash reference here, else the passed pkeys will only be used for
+the first table.
 
 =cut
 
@@ -998,8 +1003,13 @@ to have it set in the database if undef was submitted for the field.
 
 Passing false (0) to this method will cause the object to not display
 any database defaults and to not pass undefined (NULL) field values to
-the database. So in the database, the default values will be set
-instead of the submitted NULL values.
+the database when executing an INSERT. So, when inserting new records
+in a database table, the default values will be set instead of the
+submitted NULL values.
+
+B<Note>: When updating records, empty field values will cause passing
+NULL to the database, independ of wether this method was called or
+not!
 
 =cut
 
@@ -1290,14 +1300,17 @@ sub _dbsql_write {
 	if(! @{$input{$_}}) {
 	  delete $fields{$tbl}->[$i];
 	}
-	if(($self->{dbsql_show_default} > 0) || ($value or $value eq '0') and defined($value) and !$self->{dbsql_pkey}->{$tbl}->{$_} || ($value or $value eq '0')) {
+	if(($self->{dbsql_show_default} > 0 or $update) || ($value or $value eq '0') and defined($value) and !$self->{dbsql_pkey}->{$tbl}->{$_} || ($value or $value eq '0')) {
 	  ($key = $_) =~ s/^(.+)\.(.+)$/$2/;
 	  $key = $self->{dbsql}->quote_identifier($key);
 	  if($self->{dbsql_pkey}->{$tbl}->{$_}) {
 	    $pkey{$key} = $self->{dbsql}->quote($value);
 	  }
-	  $values{$key} = (($value or $value eq '0') ? $self->{dbsql}->quote($value) : $self->{dbsql}->quote('NULL'));
+	  $values{$key} = (($value or $value eq '0') ? $self->{dbsql}->quote($value) : 'NULL');
 	}
+	#elsif($update and defined($value) and !$self->{dbsql_pkey}->{$tbl}->{$_}) {
+	#  push @setdefault, $value;
+	#}
 	$i ++;
       }
       
@@ -1446,6 +1459,7 @@ sub _dbsql_mk_update {
     }
     $sql =~ s/ AND $//;
   }
+  
   return $sql;
 }
 
